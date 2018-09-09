@@ -3,13 +3,13 @@ extern crate serenity;
 
 extern crate reqwest;
 
-extern crate html2runes;
 extern crate serde;
 extern crate serde_json;
 
 #[macro_use]
 extern crate serde_derive;
 
+extern crate html2runes;
 extern crate unicode_segmentation;
 
 use unicode_segmentation::UnicodeSegmentation;
@@ -24,12 +24,12 @@ use std::io::{self, Write};
 
 use serde_json::{Value, Error};
 
-use html2runes::markdown;
 
 use std::collections::HashMap;
 
+mod commands;
+
 struct Handler;
-static TERMOFIS_URL: &'static str = "http://www.fr.brezhoneg.bzh/include/ajax/ajax.rechercheTermofis.php?logSearch=true&TERME=%term%&NOM=0&TER_DOMAINE=&LANGUE=_FR&TPLCODE=TPL_TERMOFIS&isSearch=true&numPage=1&IDSEARCH=";
 
 static GLOBSE_URL: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
 static LT_URL: &'static str = "https://languagetool.org/api/v2/check";
@@ -58,31 +58,19 @@ struct ResultLT {
 impl EventHandler for Handler {
 
 
-    //    // Set a handler for the `message` event - so that whenever a new message
-    // is received - the closure (or function) passed will be called.
-    //
-    // Event handlers are dispatched through a threadpool, and so multiple
-    // events can be dispatched simultaneously.
     fn message(&self, _: Context, msg: Message)  {
         if msg.content == "!ping" {
-            // Sending a message can fail, due to a network error, an
-            // authentication error, or lack of permissions to post in the
-            // channel, so log to stdout when some error happens, with a
-                // description of it.
             if let Err(why) = msg.channel_id.say("Pong!") {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {
-           
 
             let term = str::replace(&msg.content, "!termofis ", "");
-            let uri = str::replace(TERMOFIS_URL, "%term%", &term);
-           
-            println!("{}", &uri);
-            let mut res = reqwest::get(&uri).unwrap();
-            let body = markdown::convert_string(&res.text().unwrap());
-            //println!("{}",body);
-            msg.channel_id.say(body);
+            let message = commands::termofis_run(&term).unwrap();
+
+            if let Err(why) = msg.channel_id.say(message) {
+                println!("Error sending message: {:?}", why);
+            }
        } else if msg.content.starts_with("!difazi") {
             let mut term = str::replace(&msg.content, "!difazi ", "");
             let mut language = String::from("br");
@@ -99,7 +87,7 @@ impl EventHandler for Handler {
             let mut iter = UnicodeSegmentation::graphemes(iterable_phrase.as_str(), true).collect::<Vec<&str>>();
             let mut message: String = String::new();
             for i in &json_data.matches {
-               
+
                 phrase.insert_str((i.offset + offset) as usize, "~~");
                 offset = offset+2;
                 println!("{}", &phrase);
@@ -113,7 +101,7 @@ impl EventHandler for Handler {
                 if is_replacement {
                     phrase.insert_str((i.offset + i.length + offset) as usize, &format!("**{}**", &i.replacements.first().unwrap().value));
                     offset = offset + i.replacements.first().unwrap().value.len() as i32;
-                }            
+                }
             }
             println!("{}", &phrase);
             msg.channel_id.say(&phrase);
@@ -121,34 +109,15 @@ impl EventHandler for Handler {
             for i in &json_data.matches {
                 msg.channel_id.say(&i.message);
             }
-            
-
-            std::io::copy(&mut res, &mut std::io::stdout()).unwrap();
        } else if msg.content.starts_with("!glosbe") {
-       
+
             let term = str::replace(&msg.content, "!glosbe ", "");
-            let uri = str::replace(GLOBSE_URL, "%term%", &term);
-            let mut res = reqwest::get(&uri).unwrap();
+            let message = commands::glosbe_run(&term).unwrap();
 
-            let mut json_data: ResultGlosbe= res.json().unwrap();
-            if(json_data.result == "ok") {
-                let mut message: String = String::new();
-                message.push_str("Resultat:");
-                    
-                for i in json_data.tuc {
-                    let mut word =  &i["phrase"]["text"];
-                    if word.is_string() {
-                        message.push_str(&format!("\n **{}**", &str::replace(word.as_str().unwrap(), "\"", "")));
-                    }
-                
-                };
-
-                msg.channel_id.say(&message);
-
-            }
+            msg.channel_id.say(&message);
             //println!("{}", jsonData);
 
-           
+
        }
     }
 

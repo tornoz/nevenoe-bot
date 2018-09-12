@@ -1,6 +1,5 @@
 use reqwest;
 use serde_json::{Value, Error as SerdeError};
-use std::error::Error;
 
 static GLOBSE_URL: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
 
@@ -17,13 +16,14 @@ struct ResultGlosbe {
 //     }
 // }
 
-pub fn run(term: &str) -> Result<String, &Error> {
+// pub fn run(term: &str) -> Result<String, &Error> {
+pub fn run(term: &str) -> String {
 
     let uri = str::replace(GLOBSE_URL, "%term%", &term);
     let mut res = reqwest::get(&uri).unwrap();
 
     let mut json_data: ResultGlosbe= res.json().unwrap();
-    if(json_data.result == "ok") {
+    if json_data.result == "ok" {
         let mut message: String = String::new();
         message.push_str("Resultat:");
         for i in json_data.tuc {
@@ -32,8 +32,10 @@ pub fn run(term: &str) -> Result<String, &Error> {
                 message.push_str(&format!("\n **{}**", &str::replace(word.as_str().unwrap(), "\"", "")));
             }
         };
-        return Ok(message);
+        // return Ok(message);
+        return message;
     } else {
-        return Err(Error {});
+        // return Err(Error {});{
+        return String::from("oups");
     }
 }

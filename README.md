@@ -4,6 +4,10 @@ Discord bot that provides access to breton language tools
 
 Usage
 =====
+ 
+!help
+
+lists all available commands
 
 !termofis [term]
 
@@ -11,7 +15,7 @@ directly access the termofis dictionnary and print out result in markdown. fr=>b
 
 !glosbe [term]
 
-give result from globse dictionnary (fr => br)
+give result from glosbe dictionnary (fr => br)
 
 !difazi [sentence]
 

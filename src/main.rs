@@ -8,6 +8,7 @@ extern crate serde_json;
 
 #[macro_use]
 extern crate serde_derive;
+extern crate victoria_dom;
 
 extern crate html2runes;
 extern crate unicode_segmentation;
@@ -38,7 +39,16 @@ impl EventHandler for Handler {
             if let Err(why) = msg.channel_id.say(message) {
                 println!("Error sending message: {:?}", why);
             }
-       } else if msg.content.starts_with("!difazi") {
+       }  else if msg.content.starts_with("!troer") {
+
+           let term = str::replace(&msg.content, "!troer ", "");
+           // let message = commands::termofis_run(&term).unwrap();
+           let message = commands::troer_run(&term);
+
+           if let Err(why) = msg.channel_id.say(message) {
+               println!("Error sending message: {:?}", why);
+           }
+      } else if msg.content.starts_with("!difazi") {
             let term = str::replace(&msg.content, "!difazi ", "");
 
             let message = commands::languagetool_run(&term);

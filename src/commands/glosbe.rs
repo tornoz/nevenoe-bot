@@ -22,7 +22,7 @@ pub fn run(term: &str) -> String {
     let uri = str::replace(GLOBSE_URL, "%term%", &term);
     let mut res = reqwest::get(&uri).unwrap();
 
-    let mut json_data: ResultGlosbe= res.json().unwrap();
+    let json_data: ResultGlosbe= res.json().unwrap();
     if json_data.result == "ok" {
         let mut message: String = String::new();
         message.push_str("Resultat:");

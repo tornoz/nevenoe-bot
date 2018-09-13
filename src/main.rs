@@ -1,6 +1,5 @@
 extern crate serenity;
 
-
 extern crate reqwest;
 
 extern crate serde;
@@ -24,10 +23,16 @@ struct Handler;
 
 impl EventHandler for Handler {
 
-
     fn message(&self, _: Context, msg: Message)  {
         if msg.content == "!ping" {
             if let Err(why) = msg.channel_id.say("Pong!") {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if msg.content == "!help" {
+            if let Err(why) = msg.channel_id.say("!help\nlists all available commands\n
+            \n!termofis [term]\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
+            \n!glosbe [term]\ngive result from globse dictionnary (fr => br)\n
+            \n!difazi [sentence]\ncorrects the breton sentence from languagetool API (unstable, doesn't currently work with utf8 characters)") {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {

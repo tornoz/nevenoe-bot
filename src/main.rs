@@ -1,6 +1,5 @@
 extern crate serenity;
 
-
 extern crate reqwest;
 
 extern crate serde;
@@ -8,14 +7,14 @@ extern crate serde_json;
 
 #[macro_use]
 extern crate serde_derive;
-extern crate victoria_dom;
 
 extern crate html2runes;
-extern crate unicode_segmentation;
+#[macro_use] extern crate html5ever;
 
 use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
+use serenity::model::channel::Reaction;
 use std::env;
 mod commands;
 
@@ -62,6 +61,14 @@ impl EventHandler for Handler {
 
             msg.channel_id.say(&message);
        }
+    }
+
+    fn reaction_add(&self, _ctx: Context, reaction: Reaction) {
+        // if (reaction.emoji.name == "treiñ") {
+        //     println!("TREIN");
+        // } else if (reaction.emoji.name == "difaziañ") {
+        //     println!("DIFZIAN");
+        // }
     }
 
     // Set a handler to be called on the `ready` event. This is called when a

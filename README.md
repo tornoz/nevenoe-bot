@@ -4,7 +4,7 @@ Discord bot that provides access to breton language tools
 
 Usage
 =====
- 
+
 !help
 
 lists all available commands
@@ -19,7 +19,11 @@ give result from glosbe dictionnary (fr => br)
 
 !difazi [sentence]
 
-corrects the breton sentence from languagetool API (unstable, doesn't currently work with utf8 characters)
+corrects the breton sentence from languagetool API
+
+!troer [sentence]
+
+cTranslates the breton sentences using the termofis translator
 
 Installation
 ============

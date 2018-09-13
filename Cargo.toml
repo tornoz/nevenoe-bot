@@ -10,9 +10,4 @@ html2runes = "1.0.0"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
-<<<<<<< HEAD
 html5ever = "0.13"
-=======
-victoria-dom = "0.1"
-unicode-segmentation = "1.1.0"
->>>>>>> 1ac10d9e9556999c6d7d5b26ec3478f20b7cafdd

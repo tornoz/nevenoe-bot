@@ -34,7 +34,7 @@ impl EventHandler for Handler {
 `!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
 `!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n
 `!difazi [sentence]`\ncorrects the breton sentence from languagetool API. This can also be
-triggered by using the reaction emoji \"bot_daifazi\" on a message.\n
+triggered by using the reaction emoji \"bot_difazian\" on a message.\n
 `!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
 triggered by using the reaction emoji \"bot_trein\" on a message.") {
                 println!("Error sending message: {:?}", why);

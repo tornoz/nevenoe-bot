@@ -19,11 +19,14 @@ give result from glosbe dictionnary (fr => br)
 
 !difazi [sentence]
 
-corrects the breton sentence from languagetool API
+corrects the breton sentence from languagetool API. This can also be
+triggered by using the reaction emoji "bot_difazian" on a message.
 
 !troer [sentence]
 
-cTranslates the breton sentences using the termofis translator
+Translates the breton sentences using the termofis translator. This can also be
+triggered by using the reaction emoji "bot_trein" on a message.
+
 
 Installation
 ============

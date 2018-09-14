@@ -15,6 +15,7 @@ use serenity::prelude::*;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::model::channel::Reaction;
+use serenity::model::channel::ReactionType::{Custom as ReactionCustom, Unicode as ReactionUnicode};
 use std::env;
 mod commands;
 
@@ -32,8 +33,10 @@ impl EventHandler for Handler {
             if let Err(why) = msg.channel_id.say("`!help`\nlists all available commands\n
 `!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
 `!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n
-`!difazi [sentence]`\ncorrects the breton sentence from languagetool API\n
-`!troer [sentence]`\nTranslates the breton sentences using the termofis translator") {
+`!difazi [sentence]`\ncorrects the breton sentence from languagetool API. This can also be
+triggered by using the reaction emoji \"bot_daifazi\" on a message.\n
+`!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
+triggered by using the reaction emoji \"bot_trein\" on a message.") {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {
@@ -71,11 +74,27 @@ impl EventHandler for Handler {
     }
 
     fn reaction_add(&self, _ctx: Context, reaction: Reaction) {
-        // if (reaction.emoji.name == "treiñ") {
-        //     println!("TREIN");
-        // } else if (reaction.emoji.name == "difaziañ") {
-        //     println!("DIFZIAN");
-        // }
+        match reaction.emoji {
+            ReactionCustom {ref animated,ref id,ref name} => {
+                let name = name.clone().unwrap();
+                if name == "bot_trein" {
+                    let term = str::replace(&reaction.message().unwrap().content, "!troer ", "");
+                    // let message = commands::termofis_run(&term).unwrap();
+                    let message = commands::troer_run(&term);
+
+                    if let Err(why) = reaction.channel_id.say(message) {
+                        println!("Error sending message: {:?}", why);
+                    }
+                } else if name == "bot_difazian" {
+                    let term = str::replace(&reaction.message().unwrap().content, "!difazi ", "");
+
+                    let message = commands::languagetool_run(&term);
+
+                    reaction.channel_id.say(&message);
+                }
+            },
+            ReactionUnicode(_) => {}
+        }
     }
 
     // Set a handler to be called on the `ready` event. This is called when a

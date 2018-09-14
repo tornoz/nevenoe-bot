@@ -1,6 +1,7 @@
 extern crate serenity;
 
 extern crate reqwest;
+extern crate regex;
 
 extern crate serde;
 extern crate serde_json;
@@ -37,6 +38,15 @@ impl EventHandler for Handler {
 triggered by using the reaction emoji \"bot_difazian\" on a message.\n
 `!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
 triggered by using the reaction emoji \"bot_trein\" on a message.") {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if msg.content.starts_with("!wikeriadur") {
+
+            let term = str::replace(&msg.content, "!wikeriadur ", "");
+            // let message = commands::termofis_run(&term).unwrap();
+            let message = commands::wikeriadur_run(&term);
+
+            if let Err(why) = msg.channel_id.say(message) {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {

@@ -29,10 +29,7 @@ impl EventHandler for Handler {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content == "!help" {
-            if let Err(why) = msg.channel_id.say("`!help`\nlists all available commands\n
-            `!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
-            `!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n
-            `!difazi [sentence]`\ncorrects the breton sentence from languagetool API (unstable, doesn't currently work with utf8 characters)") {
+            if let Err(why) = msg.channel_id.say("`!help`\nlists all available commands\n`!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n`!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n`!difazi [sentence]`\ncorrects the breton sentence from languagetool API (unstable, doesn't currently work with utf8 characters)") {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {

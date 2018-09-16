@@ -31,69 +31,74 @@ pub fn run(term: &str) -> String {
     let linkRe = Regex::new(linkRegex).unwrap();
     let quoteRe = Regex::new(quoteRegex).unwrap();
 
-    println!("{}", &uri);
-    let mut res = reqwest::get(&uri).unwrap();
-    let text = &res.text().unwrap();
-    let mut lines:Vec<&str> = text.split("\n").collect();
+    let mut res = reqwest::get(&uri);
+    if let Err(e) = res {
 
-    let mut capturing = false;
+    } else {
+        let text = &res.unwrap().text().unwrap();
+        let mut lines:Vec<&str> = text.split("\n").collect();
 
-    for mut line in &lines {
-        let mut wordClass = String::from("");
-        let mut definition = String::from("");
-        let mut example = String::from("");
-        let mut lang = String::from("");
-        let mut toPrint = false;
+        let mut capturing = false;
 
-        for cap in langRe.captures_iter(line) {
-            if cap[1] == "br".to_string() {
-                lang = String::from(&cap[1]);
-                capturing = true;
-            } else {
-                capturing = false;
-            }
-        }
+        for mut line in &lines {
+            let mut wordClass = String::from("");
+            let mut definition = String::from("");
+            let mut example = String::from("");
+            let mut lang = String::from("");
+            let mut toPrint = false;
 
-        if capturing {
-            for cap in classRe.captures_iter(line) {
-                toPrint = true;
-                let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
-                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = linkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = quoteRe.replace_all(&afterLine, "");
-                wordClass = String::from(afterLine);
-                //println!("CLASS: {} ", &cap[1]);
-                result.push_str("\n\n");
-                result.push_str(&wordClass);
+            for cap in langRe.captures_iter(line) {
+                if cap[1] == "br".to_string() {
+                    lang = String::from(&cap[1]);
+                    capturing = true;
+                } else {
+                    capturing = false;
+                }
             }
 
-            for cap in definitionRe.captures_iter(line) {
-                toPrint = true;
-                let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
-                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = linkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = quoteRe.replace_all(&afterLine, "");
-                definition = String::from(afterLine);
-                result.push_str("\n -");
-                result.push_str(&definition);
-            }
+            if capturing {
+                for cap in classRe.captures_iter(line) {
+                    toPrint = true;
+                    let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                    let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = linkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = quoteRe.replace_all(&afterLine, "");
+                    wordClass = String::from(afterLine);
+                    //println!("CLASS: {} ", &cap[1]);
+                    result.push_str("\n\n");
+                    result.push_str(&wordClass);
+                }
 
-            for cap in exampleRe.captures_iter(line) {
-                toPrint = true;
-                let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
-                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = linkRe.replace_all(&afterLine, "$1");
-                let mut afterLine = quoteRe.replace_all(&afterLine, "");
-                example = String::from(afterLine);
-                result.push_str("\n ----");
-                result.push_str(&example);
+                for cap in definitionRe.captures_iter(line) {
+                    toPrint = true;
+                    let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                    let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = linkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = quoteRe.replace_all(&afterLine, "");
+                    definition = String::from(afterLine);
+                    result.push_str("\n -");
+                    result.push_str(&definition);
+                }
+
+                for cap in exampleRe.captures_iter(line) {
+                    toPrint = true;
+                    let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                    let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = linkRe.replace_all(&afterLine, "$1");
+                    let mut afterLine = quoteRe.replace_all(&afterLine, "");
+                    example = String::from(afterLine);
+                    result.push_str("\n ----");
+                    result.push_str(&example);
+                }
             }
         }
     }
 
-    //println!("{}", after);
-    return result;
+    if result == String::from("") {
+        result = "No result".to_string();
+    }
+    return result
 }

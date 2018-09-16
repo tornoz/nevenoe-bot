@@ -1,10 +1,8 @@
 
 
 use reqwest;
-use std::error::Error;
 use html5ever::parse_document;
 use html5ever::rcdom::{Document, Doctype, Text, Comment, Element, RcDom, Handle};
-use std::error;
 use html5ever::tendril::TendrilSink;
 
 static TROER_URL: &'static str = "http://www.fr.brezhoneg.bzh/42-traducteur-automatique.htm";
@@ -40,10 +38,10 @@ pub fn class_finder(handle: Handle, class: &String, found: bool) -> Option<Strin
                 if found { Some(text.to_string())} else {None}
             },
 
-        Element ( ref name, _, ref attrs) => {
+        Element ( ref _name, _, ref attrs) => {
             let mut found = false;
             for attr in attrs.iter() {
-                if(attr.name.local.to_string() == "class" && attr.value.to_string() == *class) {
+                if attr.name.local.to_string() == "class" && attr.value.to_string() == *class {
                     found = true;
                 }
             }

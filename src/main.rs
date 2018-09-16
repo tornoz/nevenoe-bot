@@ -9,7 +9,7 @@ extern crate serde_json;
 extern crate serde_derive;
 
 extern crate html2runes;
-#[macro_use] extern crate html5ever;
+extern crate html5ever;
 
 use serenity::prelude::*;
 use serenity::model::channel::Message;
@@ -61,23 +61,25 @@ triggered by using the reaction emoji \"bot_trein\" on a message.") {
             let term = str::replace(&msg.content, "!difazi ", "");
 
             let message = commands::languagetool_run(&term);
-
-            msg.channel_id.say(&message);
+            if let Err(why) = msg.channel_id.say(message) {
+                println!("Error sending message: {:?}", why);
+            }
        } else if msg.content.starts_with("!glosbe") {
 
             let term = str::replace(&msg.content, "!glosbe ", "");
             // let message = commands::glosbe_run(&term).unwrap();
             let message = commands::glosbe_run(&term);
-
-            msg.channel_id.say(&message);
+            if let Err(why) = msg.channel_id.say(message) {
+                println!("Error sending message: {:?}", why); 
+            }
        }
     }
 
     fn reaction_add(&self, _ctx: Context, reaction: Reaction) {
         match reaction.emoji {
-            ReactionCustom {ref animated,ref id,ref name} => {
+            ReactionCustom {animated: _, id: _,ref name} => {
                 let name = name.clone().unwrap();
-                if name == "bot_trein" {
+                if name == "bot_trein" && is_first(&reaction) {
                     let term = str::replace(&reaction.message().unwrap().content, "!troer ", "");
                     // let message = commands::termofis_run(&term).unwrap();
                     let message = commands::troer_run(&term);
@@ -85,12 +87,14 @@ triggered by using the reaction emoji \"bot_trein\" on a message.") {
                     if let Err(why) = reaction.channel_id.say(message) {
                         println!("Error sending message: {:?}", why);
                     }
-                } else if name == "bot_difazian" {
+                } else if name == "bot_difazian" && is_first(&reaction){
                     let term = str::replace(&reaction.message().unwrap().content, "!difazi ", "");
 
                     let message = commands::languagetool_run(&term);
 
-                    reaction.channel_id.say(&message);
+                    if let Err(why) = reaction.channel_id.say(message) {
+                        println!("Error sending message: {:?}", why);
+                    }
                 }
             },
             ReactionUnicode(_) => {}
@@ -106,6 +110,18 @@ triggered by using the reaction emoji \"bot_trein\" on a message.") {
     fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
+}
+
+fn is_first(reaction: &Reaction) -> bool {
+    if serenity::http::get_reaction_users(
+            reaction.channel_id.0,
+            reaction.message_id.0,
+            &reaction.emoji,
+            50,
+            None).unwrap().len() == 1 {
+        return true;
+    }
+    return false;
 }
 
 fn main() {

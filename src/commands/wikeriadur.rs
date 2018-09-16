@@ -7,6 +7,9 @@ static langRegex: &'static str = r"(?m)\{\{=([a-z]{2,3})=\}\}";
 static classRegex: &'static str = r"(?m)\{\{-([[:alpha:]-]*)-\|[a-z]{2,3}.{0,}\}\}";
 static definitionRegex: &'static str = r"(?m)^#[^*](.*)$";
 static exampleRegex: &'static str = r"(?m)^#\*(.*)$";
+static mutatedWordLinkRegex: & 'static str = r"(?m)\[\[[[:alpha:]\-\s']*\|([[:alpha:]\-\s']*)\]\]";
+static langWordLinkRegex: & 'static str = r"(?m)\{\{ucf\|([[:alpha:]\-\s']*)\}\}";
+static linkRegex: & 'static str = r"(?m)\[\[([[:alpha:]\-\s']*)\]\]";
 
 // pub fn run(term: &str) -> Result<String, &Error> {
 pub fn run(term: &str) -> String {

@@ -3,17 +3,17 @@ use regex::Regex;
 use std::error::Error;
 
 static WIKERIADUR_URL: &'static str = "https://br.wiktionary.org/wiki/%term%?action=raw";
-static langRegex: &'static str = r"(?m)\{\{=([a-z]{2,3})=\}\}";
-static classRegex: &'static str = r"(?m)\{\{-([[:alpha:]-]*)-\|[a-z]{2,3}.{0,}\}\}";
-static definitionRegex: &'static str = r"(?m)^#[^*](.*)$";
-static exampleRegex: &'static str = r"(?m)^#\*(.*)\{\{mammenn\|.*$";
+static langRegex: &'static str = r"(?m)\{\{=([a-z]{2,3})=\}\}"; // matches the lang tag
+static classRegex: &'static str = r"(?mu)\{\{-([[:alpha:]ñùê-]*)-\|[a-z]{2,3}.{0,}\}\}"; // matches the grammatical class of the word (beginning of definition)
+static definitionRegex: &'static str = r"(?m)^#([^*].*)$"; // matches the definition
+static exampleRegex: &'static str = r"(?m)^#\*(.*)\{\{mammenn\|.*$"; // matches the use case example
 
-static mutatedWordLinkRegex: & 'static str = r"(?m)\[\[[[:alpha:]\-\s']*\|([[:alpha:]\-\s']*)\]\]";
-static langWordLinkRegex: & 'static str = r"(?m)\{\{ucf\|([[:alpha:]\-\s']*)\}\}";
-static linkRegex: & 'static str = r"(?m)\[\[([[:alpha:]\-\s']*)\]\]";
+static mutatedWordLinkRegex: & 'static str = r"(?mu)\[\[[[:alpha:]ñùê\-\s']*\|([[:alpha:]ñùê\-\s']*)\]\]";
+static langWordLinkRegex: & 'static str = r"(?mu)\{\{ucf\|([[:alpha:]ñùê\-\s']*)\}\}";
+static wikiLinkRegex: & 'static str = r"(?mu)\[\[w:[[:alpha:]ñùê\-\s']*\|([[:alpha:]ñùê\-\s']*)\]\]";
+static linkRegex: & 'static str = r"(?mu)\[\[([[:alpha:]ñùê\-\s']*)\]\]";
 static quoteRegex: & 'static str = r"(?m)([']{2,})";
 
-// pub fn run(term: &str) -> Result<String, &Error> {
 pub fn run(term: &str) -> String {
     let uri = str::replace(WIKERIADUR_URL, "%term%", &term);
     let mut result = String::from("");
@@ -27,6 +27,7 @@ pub fn run(term: &str) -> String {
     // replacement regexes
     let mutatedWordLinkRe = Regex::new(mutatedWordLinkRegex).unwrap();
     let langWordLinkRe = Regex::new(langWordLinkRegex).unwrap();
+    let wikiLinkRe = Regex::new(wikiLinkRegex).unwrap();
     let linkRe = Regex::new(linkRegex).unwrap();
     let quoteRe = Regex::new(quoteRegex).unwrap();
 
@@ -57,37 +58,39 @@ pub fn run(term: &str) -> String {
             for cap in classRe.captures_iter(line) {
                 toPrint = true;
                 let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = linkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = quoteRe.replace_all(&afterLine, "");
                 wordClass = String::from(afterLine);
                 //println!("CLASS: {} ", &cap[1]);
+                result.push_str("\n\n");
+                result.push_str(&wordClass);
             }
 
             for cap in definitionRe.captures_iter(line) {
                 toPrint = true;
                 let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = linkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = quoteRe.replace_all(&afterLine, "");
                 definition = String::from(afterLine);
+                result.push_str("\n -");
+                result.push_str(&definition);
             }
 
             for cap in exampleRe.captures_iter(line) {
                 toPrint = true;
                 let mut afterLine = mutatedWordLinkRe.replace_all(&cap[1], "$1");
+                let mut afterLine = wikiLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = langWordLinkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = linkRe.replace_all(&afterLine, "$1");
                 let mut afterLine = quoteRe.replace_all(&afterLine, "");
                 example = String::from(afterLine);
+                result.push_str("\n ----");
+                result.push_str(&example);
             }
-        }
-
-        if toPrint {
-            result.push_str(&lang);
-            result.push_str(&wordClass);
-            result.push_str(&definition);
-            result.push_str(&example);
         }
     }
 

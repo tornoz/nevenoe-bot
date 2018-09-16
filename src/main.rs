@@ -37,7 +37,8 @@ impl EventHandler for Handler {
 `!difazi [sentence]`\ncorrects the breton sentence from languagetool API. This can also be
 triggered by using the reaction emoji \"bot_difazian\" on a message.\n
 `!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
-triggered by using the reaction emoji \"bot_trein\" on a message.") {
+triggered by using the reaction emoji \"bot_difazian\" on a message.\n
+`!wikeriadur [term]`\nGets the definition of a given term from br.wiktionary.org (results in breton).") {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!wikeriadur") {

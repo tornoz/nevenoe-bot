@@ -21,6 +21,9 @@ triggered by using the reaction emoji "bot_difazian" on a message.
 Translates the breton sentences using the termofis translator. This can also be
 triggered by using the reaction emoji "bot_trein" on a message.
 
+`!wikeriadur [term]`
+Gets the definition of a given term from br.wiktionary.org (results in breton).
+
 ## Installation
 
 run

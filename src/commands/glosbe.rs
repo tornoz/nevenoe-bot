@@ -1,5 +1,5 @@
 use reqwest;
-use serde_json::{Value, Error as SerdeError};
+use serde_json::{Value};
 
 static GLOBSE_URL: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
 

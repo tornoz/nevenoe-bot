@@ -1,6 +1,7 @@
 extern crate serenity;
 
 extern crate reqwest;
+extern crate regex;
 
 extern crate serde;
 extern crate serde_json;
@@ -34,9 +35,19 @@ impl EventHandler for Handler {
 `!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
 `!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n
 `!difazi [sentence]`\ncorrects the breton sentence from languagetool API. This can also be
-triggered by using the reaction emoji \"bot_daifazi\" on a message.\n
+triggered by using the reaction emoji \"bot_difazian\" on a message.\n
 `!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
-triggered by using the reaction emoji \"bot_trein\" on a message.") {
+triggered by using the reaction emoji \"bot_difazian\" on a message.\n
+`!wikeriadur [term]`\nGets the definition of a given term from br.wiktionary.org (results in breton).") {
+                println!("Error sending message: {:?}", why);
+            }
+        } else if msg.content.starts_with("!wikeriadur") {
+
+            let term = str::replace(&msg.content, "!wikeriadur ", "");
+            // let message = commands::termofis_run(&term).unwrap();
+            let message = commands::wikeriadur_run(&term);
+
+            if let Err(why) = msg.channel_id.say(message) {
                 println!("Error sending message: {:?}", why);
             }
         } else if msg.content.starts_with("!termofis") {

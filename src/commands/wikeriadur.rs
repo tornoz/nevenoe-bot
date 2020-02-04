@@ -114,7 +114,8 @@ pub fn run(term: &str) -> String {
             result.push_str(term);
             result.push_str("]\n");
             result.push_str(&buffer);
-            result.truncate(1995);
+            result.truncate(1990);
+            result.push_str("[...]");
             result.push_str("\n```");
         }
     }

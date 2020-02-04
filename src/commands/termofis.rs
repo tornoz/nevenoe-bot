@@ -10,5 +10,8 @@ pub fn run(term: &str) -> String {
 
     println!("{}", &uri);
     let mut res = reqwest::get(&uri).unwrap();
-    return markdown::convert_string(&res.text().unwrap());
+    let mut result = String::from(markdown::convert_string(&res.text().unwrap()));
+    result.truncate(1993);
+    result.push_str("[...]");
+    return result;
 }

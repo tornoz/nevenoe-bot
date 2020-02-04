@@ -1,7 +1,7 @@
 use reqwest;
 use serde_json::{Value};
 
-static GLOBSE_URL: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
+static GLOSBE_URL: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
 
 #[derive(Deserialize)]
 struct ResultGlosbe {
@@ -19,8 +19,9 @@ struct ResultGlosbe {
 // pub fn run(term: &str) -> Result<String, &Error> {
 pub fn run(term: &str) -> String {
 
-    let uri = str::replace(GLOBSE_URL, "%term%", &term);
+    let uri = str::replace(GLOSBE_URL, "%term%", &term);
     let mut res = reqwest::get(&uri).unwrap();
+    println!("{:?}", res);
 
     let json_data: ResultGlosbe= res.json().unwrap();
     if json_data.result == "ok" {

@@ -32,8 +32,8 @@ impl EventHandler for Handler {
             }
         } else if msg.content == "!help" {
             if let Err(why) = msg.channel_id.say("`!help`\nlists all available commands\n
-`!termofis [term]`\ndirectly access the termofis dictionnary and print out result in markdown. fr=>br\n
-`!glosbe [term]`\ngive result from globse dictionnary (fr => br)\n
+`!termofis [term]`\ndirectly access the termofis dictionary and print out result in markdown. fr=>br\n
+`!glosbe [term]`\ngive result from globse dictionary (fr => br)\n
 `!difazi [sentence]`\ncorrects the breton sentence from languagetool API. This can also be
 triggered by using the reaction emoji \"bot_difazian\" on a message.\n
 `!troer [sentence]`\nTranslates the breton sentences using the termofis translator. This can also be
@@ -81,7 +81,7 @@ triggered by using the reaction emoji \"bot_difazian\" on a message.\n
             // let message = commands::glosbe_run(&term).unwrap();
             let message = commands::glosbe_run(&term);
             if let Err(why) = msg.channel_id.say(message) {
-                println!("Error sending message: {:?}", why); 
+                println!("Error sending message: {:?}", why);
             }
        }
     }
@@ -137,8 +137,8 @@ fn is_first(reaction: &Reaction) -> bool {
 
 fn main() {
     // Configure the client with your Discord bot token in the environment.
-    let token = env::var("DISCORD_TOKEN")
-        .expect("Expected a token in the environment");
+    let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment");
+
 
     // Create a new instance of the Client, logging in as a bot. This will
     // automatically prepend your bot token with "Bot ", which is a requirement

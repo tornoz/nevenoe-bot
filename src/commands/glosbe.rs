@@ -5,7 +5,7 @@ use regex::Regex;
 static GLOSBE_URL_API: &'static str = "https://glosbe.com/gapi/translate?from=fra&dest=bre&format=json&phrase=%term%";
 static GLOSBE_URL_SITE: &'static str = "https://glosbe.com/fr/br/%term%";
 
-static WORD_REGEX: & 'static str = r#"(?mU)<strong class=" phr">(.*)</strong>"#;
+static WORD_REGEX: & 'static str = r#"(?mU)<span data-element="phrase" data-translation="(.*)""#;
 
 #[derive(Deserialize)]
 struct ResultGlosbe {
